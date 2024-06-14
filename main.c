@@ -16,7 +16,7 @@ void lerArquivo() {
     FILE *Fp = fopen("processes.txt", "r");
     if (Fp == NULL) {
         perror("erro");
-        return 1;
+        exit(EXIT_FAILURE);
     }
 
     struct processos processos[100]; 
@@ -30,6 +30,18 @@ void lerArquivo() {
         n++;
     }
 
+    for (int i = 0; i < n; i++){
+        printf("Processo %d:\n", i + 1);
+        printf("PID: %d\n", processos[i].pid);
+        printf("Tempo de Chegada: %d\n", processos[i].arrival_time);
+        printf("Burst: %d\n", processos[i].burst);
+        printf("Prioridade: %d\n", processos[i].priority);
+        printf("Tempo Restante: %d\n", processos[i].remaining_time);
+        printf("Tempo de Inicio: %d\n", processos[i].start_time);
+        printf("Tempo de Conclusão: %d\n", processos[i].completion_time);
+        printf("Tempo de Espera: %d\n", processos[i].waiting_time);
+        printf("\n");
+    }
     fclose(Fp);
 }
 
