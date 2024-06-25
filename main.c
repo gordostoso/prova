@@ -38,14 +38,69 @@ void lerArquivo() {
         printf("Prioridade: %d\n", processos[i].priority);
         printf("Tempo Restante: %d\n", processos[i].remaining_time);
         printf("Tempo de Inicio: %d\n", processos[i].start_time);
-        printf("Tempo de Conclusão: %d\n", processos[i].completion_time);
+        printf("Tempo de Conclusao: %d\n", processos[i].completion_time);
         printf("Tempo de Espera: %d\n", processos[i].waiting_time);
         printf("\n");
     }
     fclose(Fp);
 }
 
+void processos_programa(Process processes[], int n) {
+    int current_time = 0;
+    int completed_processes = 0;
+    int prev_pid = -1;
+
+    while (completed_processes < n) {
+        int highest_priority = -1;
+        int idx = -1;
+
+        for (int i = 0; i < n; i++) {
+            if (processes[i].arrival_time <= current_time && processes[i].remaining_time > 0) {
+                if (highest_priority == -1 || processes[i].priority < highest_priority) {
+                    highest_priority = processes[i].priority;
+                    idx = i;
+                }
+            }
+        }
+
+        if (idx == -1) {
+            current_time++;
+            continue;
+        }
+
+        if (processes[idx].pid != prev_pid) {
+            if (prev_pid != -1) {
+                printf("Troca de contexto: Processo %d preemptado pelo Processo %d\n", prev_pid, processes[idx].pid);
+            }
+            printf("Processo %d está executando\n", processes[idx].pid);
+            prev_pid = processes[idx].pid;
+        }
+
+        processes[idx].remaining_time--;
+        current_time++;
+
+        if (processes[idx].remaining_time == 0) {
+            processes[idx].completion_time = current_time;
+            processes[idx].waiting_time = processes[idx].completion_time - processes[idx].arrival_time - processes[idx].burst;
+            completed_processes++;
+            printf("Processo %d completou\n", processes[idx].pid);
+        }
+    }
+}
+
+
+void calcularTtempoMedioDeEspera(Process processes[], int n) {
+    int total_waiting_time = 0;
+    for (int i = 0; i < n; i++) {
+        total_waiting_time += processes[i].waiting_time;
+    }
+    double average_waiting_time = (double)total_waiting_time / n;
+    printf("tempo medio de espera: %.2f\n", average_waiting_time);
+}
+
+
 int main() {
     lerArquivo();
+
     return 0;
 }
