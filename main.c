@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include<windows.h>
 
 struct processos {
     int pid;               // ID do processo
@@ -12,14 +13,13 @@ struct processos {
     int waiting_time;      // Tempo de espera do processo
 };
 
-void lerArquivo() {
+int lerArquivo(struct processos processos[]) {
     FILE *Fp = fopen("processes.txt", "r");
     if (Fp == NULL) {
         perror("erro");
         exit(EXIT_FAILURE);
     }
 
-    struct processos processos[100]; 
     int n = 0;
 
     while (fscanf(Fp, "%d %d %d %d", &processos[n].pid, &processos[n].arrival_time, &processos[n].burst, &processos[n].priority) != EOF) {
@@ -43,9 +43,10 @@ void lerArquivo() {
         printf("\n");
     }
     fclose(Fp);
+    return n;
 }
 
-void processos_programa(Process processes[], int n) {
+void processos_programa(struct processos processes[], int n) {
     int current_time = 0;
     int completed_processes = 0;
     int prev_pid = -1;
@@ -72,7 +73,8 @@ void processos_programa(Process processes[], int n) {
             if (prev_pid != -1) {
                 printf("Troca de contexto: Processo %d preemptado pelo Processo %d\n", prev_pid, processes[idx].pid);
             }
-            printf("Processo %d está executando\n", processes[idx].pid);
+            printf("Processo %d esta executando\n", processes[idx].pid);
+            Sleep(10);
             prev_pid = processes[idx].pid;
         }
 
@@ -89,7 +91,7 @@ void processos_programa(Process processes[], int n) {
 }
 
 
-void calcularTtempoMedioDeEspera(Process processes[], int n) {
+void calcularTempoMedioDeEspera(struct processos processes[], int n) {
     int total_waiting_time = 0;
     for (int i = 0; i < n; i++) {
         total_waiting_time += processes[i].waiting_time;
@@ -100,7 +102,9 @@ void calcularTtempoMedioDeEspera(Process processes[], int n) {
 
 
 int main() {
-    lerArquivo();
-
+    struct processos processos[100];
+    int n = lerArquivo(processos);
+    processos_programa(processos, n);
+    calcularTempoMedioDeEspera(processos, n);
     return 0;
 }
