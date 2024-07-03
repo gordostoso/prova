@@ -74,7 +74,7 @@ void processos_programa(struct processos processes[], int n) {
                 printf("Troca de contexto: Processo %d preemptado pelo Processo %d\n", prev_pid, processes[idx].pid);
             }
             printf("Processo %d esta executando\n", processes[idx].pid);
-            Sleep(10);
+            Sleep(100);
             prev_pid = processes[idx].pid;
         }
 
@@ -106,5 +106,9 @@ int main() {
     int n = lerArquivo(processos);
     processos_programa(processos, n);
     calcularTempoMedioDeEspera(processos, n);
+
+    printf("fechando...");
+    getchar();
+
     return 0;
 }
